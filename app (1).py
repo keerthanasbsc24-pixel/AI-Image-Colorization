@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 from PIL import Image
 import io
+import base64
 
 # Page configuration
 st.set_page_config(
@@ -22,6 +23,26 @@ def load_model():
 
 model = load_model()
 
+
+# Display image using Base64
+def display_image(image):
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+
+    encoded = base64.b64encode(
+        buffer.getvalue()
+    ).decode("utf-8")
+
+    html = f"""
+    <div style="text-align:center;">
+        <img src="data:image/png;base64,{encoded}"
+             style="width:400px; max-width:100%; height:auto;">
+    </div>
+    """
+
+    st.markdown(html, unsafe_allow_html=True)
+
+
 # Convert image to PNG bytes
 def convert_to_png(image):
     buffer = io.BytesIO()
@@ -35,6 +56,7 @@ st.title("🎨 AI-Based Image Colorization")
 st.write(
     "Convert black-and-white images into colored images using Deep Learning."
 )
+
 
 # Upload image
 uploaded_file = st.file_uploader(
@@ -50,11 +72,7 @@ if uploaded_file is not None:
         # Display original image
         st.subheader("Original Image")
 
-        st.image(
-            image,
-            caption="Original Image",
-            width=400
-        )
+        display_image(image)
 
         st.success("Original image loaded successfully!")
 
@@ -108,11 +126,7 @@ if uploaded_file is not None:
                 # Display colorized image
                 st.subheader("Colorized Image")
 
-                st.image(
-                    colorized_image,
-                    caption="AI Generated Color Image",
-                    width=400
-                )
+                display_image(colorized_image)
 
                 st.success("Image colorization completed!")
 
@@ -131,6 +145,7 @@ if uploaded_file is not None:
     except Exception as e:
         st.error("Something went wrong!")
         st.exception(e)
+
 
 st.divider()
 
