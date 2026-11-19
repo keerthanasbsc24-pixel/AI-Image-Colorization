@@ -62,6 +62,9 @@ if uploaded_file is not None:
     try:
         image = Image.open(uploaded_file).convert("RGB")
 
+        # Store original dimensions
+        original_size = image.size
+
         # Display original image
         st.subheader("Original Image")
 
@@ -77,7 +80,11 @@ if uploaded_file is not None:
                 # Preprocessing
                 img = np.array(image)
 
-                img = cv2.resize(img, (128, 128))
+                img = cv2.resize(
+                    img,
+                    (128, 128),
+                    interpolation=cv2.INTER_AREA
+                )
 
                 gray = cv2.cvtColor(
                     img,
@@ -116,6 +123,12 @@ if uploaded_file is not None:
                 # Convert to PIL image
                 colorized_image = Image.fromarray(result)
 
+                # Resize to original dimensions
+                colorized_image = colorized_image.resize(
+                    original_size,
+                    Image.Resampling.LANCZOS
+                )
+
                 # Display colorized image
                 st.subheader("Colorized Image")
 
@@ -125,7 +138,11 @@ if uploaded_file is not None:
 
                 # Download image using Base64
                 buffer = io.BytesIO()
-                colorized_image.save(buffer, format="PNG")
+
+                colorized_image.save(
+                    buffer,
+                    format="PNG"
+                )
 
                 download_encoded = base64.b64encode(
                     buffer.getvalue()
