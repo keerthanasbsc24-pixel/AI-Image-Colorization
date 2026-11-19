@@ -123,17 +123,32 @@ if uploaded_file is not None:
 
                 st.success("Image colorization completed!")
 
-                # Download image
+                # Download image using Base64
                 buffer = io.BytesIO()
                 colorized_image.save(buffer, format="PNG")
-                buffer.seek(0)
 
-                st.download_button(
-                    label="⬇️ Download Colorized Image",
-                    data=buffer.getvalue(),
-                    file_name="colorized_image.png",
-                    mime="image/png",
-                    key="download_colorized_image"
+                download_encoded = base64.b64encode(
+                    buffer.getvalue()
+                ).decode("utf-8")
+
+                download_link = f"""
+                <div style="text-align:center; margin-top:20px;">
+                    <a href="data:image/png;base64,{download_encoded}"
+                       download="colorized_image.png"
+                       style="background-color:#ff4b4b;
+                              color:white;
+                              padding:12px 24px;
+                              border-radius:8px;
+                              text-decoration:none;
+                              font-weight:bold;">
+                        ⬇️ Download Colorized Image
+                    </a>
+                </div>
+                """
+
+                st.markdown(
+                    download_link,
+                    unsafe_allow_html=True
                 )
 
     except Exception as e:
