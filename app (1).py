@@ -14,7 +14,9 @@ st.set_page_config(
 
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("image_colorization_model (1).keras")
+    return tf.keras.models.load_model(
+        "image_colorization_model (1).keras"
+    )
 
 model = load_model()
 
@@ -26,11 +28,16 @@ uploaded_file = st.file_uploader(
     type=["jpg", "jpeg", "png"]
 )
 
-if uploaded_file:
+if uploaded_file is not None:
+
     image = Image.open(uploaded_file).convert("RGB")
 
     st.subheader("Original Image")
-    st.image(image, width=400)
+    st.image(
+        image,
+        caption="Original Image",
+        use_container_width=True
+    )
 
     if st.button("Colorize Image", type="primary"):
 
@@ -54,10 +61,18 @@ if uploaded_file:
                 0, 255
             ).astype(np.uint8)
 
-            result = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
+            result = cv2.cvtColor(
+                lab,
+                cv2.COLOR_LAB2RGB
+            )
 
             st.subheader("Colorized Image")
-            st.image(result, width=400)
+
+            st.image(
+                result,
+                caption="AI Generated Color Image",
+                use_container_width=True
+            )
 
             buffer = io.BytesIO()
             Image.fromarray(result).save(buffer, format="PNG")
