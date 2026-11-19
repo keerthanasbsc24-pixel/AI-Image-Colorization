@@ -43,13 +43,6 @@ def display_image(image):
     st.markdown(html, unsafe_allow_html=True)
 
 
-# Convert image to PNG bytes
-def convert_to_png(image):
-    buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
-    return buffer.getvalue()
-
-
 # Application title
 st.title("🎨 AI-Based Image Colorization")
 
@@ -131,17 +124,17 @@ if uploaded_file is not None:
                 st.success("Image colorization completed!")
 
                 # Download image
-               buffer = io.BytesIO()
-               colorized_image.save(buffer, format="PNG")
-               buffer.seek(0)
+                buffer = io.BytesIO()
+                colorized_image.save(buffer, format="PNG")
+                buffer.seek(0)
 
-               st.download_button(
-                   label="⬇️ Download Colorized Image",
-                   data=buffer.getvalue(),
-                   file_name="colorized_image.png",
-                   mime="image/png",
-                   key="download_colorized_image"
-)
+                st.download_button(
+                    label="⬇️ Download Colorized Image",
+                    data=buffer.getvalue(),
+                    file_name="colorized_image.png",
+                    mime="image/png",
+                    key="download_colorized_image"
+                )
 
     except Exception as e:
         st.error("Something went wrong!")
