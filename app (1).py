@@ -22,7 +22,7 @@ def load_model():
 
 model = load_model()
 
-# Function to convert image into PNG bytes
+# Convert image to PNG bytes
 def convert_to_png(image):
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
@@ -45,19 +45,18 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
 
     try:
-        # Read uploaded image
         image = Image.open(uploaded_file).convert("RGB")
 
         # Display original image
         st.subheader("Original Image")
 
-        original_bytes = convert_to_png(image)
-
         st.image(
-            original_bytes,
+            image,
             caption="Original Image",
-            use_container_width=True
+            width=400
         )
+
+        st.success("Original image loaded successfully!")
 
         # Colorization button
         if st.button("🎨 Colorize Image", type="primary"):
@@ -67,10 +66,7 @@ if uploaded_file is not None:
                 # Preprocessing
                 img = np.array(image)
 
-                img = cv2.resize(
-                    img,
-                    (128, 128)
-                )
+                img = cv2.resize(img, (128, 128))
 
                 gray = cv2.cvtColor(
                     img,
@@ -78,10 +74,7 @@ if uploaded_file is not None:
                 )
 
                 X = gray.astype("float32") / 255.0
-
-                X = X.reshape(
-                    1, 128, 128, 1
-                )
+                X = X.reshape(1, 128, 128, 1)
 
                 # Model prediction
                 prediction = model.predict(
@@ -109,25 +102,25 @@ if uploaded_file is not None:
                     cv2.COLOR_LAB2RGB
                 )
 
-                # Convert result to PIL image
-                colorized_image = Image.fromarray(
-                    result.astype(np.uint8)
-                )
+                # Convert to PIL image
+                colorized_image = Image.fromarray(result)
 
                 # Display colorized image
                 st.subheader("Colorized Image")
 
+                st.image(
+                    colorized_image,
+                    caption="AI Generated Color Image",
+                    width=400
+                )
+
+                st.success("Image colorization completed!")
+
+                # Download image
                 colorized_bytes = convert_to_png(
                     colorized_image
                 )
 
-                st.image(
-                    colorized_bytes,
-                    caption="AI Generated Color Image",
-                    use_container_width=True
-                )
-
-                # Download button
                 st.download_button(
                     label="⬇️ Download Colorized Image",
                     data=colorized_bytes,
@@ -136,11 +129,9 @@ if uploaded_file is not None:
                 )
 
     except Exception as e:
-        st.error("Something went wrong while processing the image.")
+        st.error("Something went wrong!")
         st.exception(e)
 
 st.divider()
 
-st.caption(
-    "Developed using CNN and Deep Learning"
-)
+st.caption("Developed using CNN and Deep Learning")
