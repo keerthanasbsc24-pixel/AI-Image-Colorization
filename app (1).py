@@ -36,7 +36,7 @@ def display_image(image):
     html = f"""
     <div style="text-align:center;">
         <img src="data:image/png;base64,{encoded}"
-             style="width:400px; max-width:100%; height:auto;">
+             style="width:650px; max-width:100%; height:auto;">
     </div>
     """
 
