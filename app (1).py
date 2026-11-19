@@ -131,16 +131,17 @@ if uploaded_file is not None:
                 st.success("Image colorization completed!")
 
                 # Download image
-                colorized_bytes = convert_to_png(
-                    colorized_image
-                )
+               buffer = io.BytesIO()
+               colorized_image.save(buffer, format="PNG")
+               buffer.seek(0)
 
-                st.download_button(
-                    label="⬇️ Download Colorized Image",
-                    data=colorized_bytes,
-                    file_name="colorized_image.png",
-                    mime="image/png"
-                )
+               st.download_button(
+                   label="⬇️ Download Colorized Image",
+                   data=buffer.getvalue(),
+                   file_name="colorized_image.png",
+                   mime="image/png",
+                   key="download_colorized_image"
+)
 
     except Exception as e:
         st.error("Something went wrong!")
